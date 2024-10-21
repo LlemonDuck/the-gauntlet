@@ -49,6 +49,7 @@ import static net.runelite.api.ItemID.RAW_PADDLEFISH;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.NPC;
 import net.runelite.api.NpcID;
+import net.runelite.api.NullObjectID;
 import net.runelite.api.ObjectID;
 import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.ChatMessage;
@@ -99,6 +100,21 @@ public final class MazeModule implements Module
 		ObjectID.SINGING_BOWL_36063,
 		ObjectID.RANGE_36077,
 		ObjectID.WATER_PUMP_36078
+	);
+	private static final List<Integer> GAME_OBJECT_IDS_ZEN_MODE = List.of(
+		ObjectID.TELEPORT_PLATFORM, ObjectID.TELEPORT_PLATFORM_36062,
+		ObjectID.SINGING_BOWL_35966, ObjectID.SINGING_BOWL_36063,
+		ObjectID.TOOL_STORAGE, ObjectID.TOOL_STORAGE_36074,
+		ObjectID.WATER_PUMP_35981, ObjectID.WATER_PUMP_36078,
+		ObjectID.RANGE_35980, ObjectID.RANGE_36077,
+		NullObjectID.NULL_37337, NullObjectID.NULL_37339, // Barrier
+		ObjectID.NODE_35998, ObjectID.NODE_35999,
+		ObjectID.NODE_36101, ObjectID.NODE_36102,
+		ObjectID.CORRUPT_DEPOSIT, ObjectID.CRYSTAL_DEPOSIT,
+		ObjectID.CORRUPT_PHREN_ROOTS, ObjectID.PHREN_ROOTS,
+		ObjectID.CORRUPT_LINUM_TIRINUM, ObjectID.LINUM_TIRINUM,
+		ObjectID.CORRUPT_FISHING_SPOT, ObjectID.FISHING_SPOT_36068,
+		ObjectID.CORRUPT_GRYM_ROOT, ObjectID.GRYM_ROOT
 	);
 
 	@Getter(AccessLevel.PACKAGE)
@@ -253,6 +269,11 @@ public final class MazeModule implements Module
 		else if (GAME_OBJECT_IDS_UTILITY.contains(id))
 		{
 			utilities.add(gameObject);
+		}
+
+		if (config.utilitiesZenMode() && !GAME_OBJECT_IDS_ZEN_MODE.contains(id))
+		{
+			client.getTopLevelWorldView().getScene().removeGameObject(gameObject);
 		}
 	}
 

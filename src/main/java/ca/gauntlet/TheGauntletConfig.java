@@ -588,6 +588,19 @@ public interface TheGauntletConfig extends Config
 		return false;
 	}
 
+	String CONFIG_KEY_ZEN_MODE = "utilitiesZenMode";
+
+	@ConfigItem(
+		name = "Zen Mode",
+		description = "Hides scenery to reduce eyestrain.",
+		position = 4,
+		keyName = CONFIG_KEY_ZEN_MODE,
+		section = utilitiesSection
+	)
+	default boolean utilitiesZenMode()
+	{
+		return false;
+	}
 
 	// Hunllef Section
 

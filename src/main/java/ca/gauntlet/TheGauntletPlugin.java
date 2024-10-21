@@ -40,6 +40,7 @@ import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
@@ -93,6 +94,31 @@ public final class TheGauntletPlugin extends Plugin
 	{
 		mazeModule.stop();
 		bossModule.stop();
+	}
+
+	@Subscribe
+	void onConfigChanged(final ConfigChanged event)
+	{
+		if (!event.getGroup().equals(TheGauntletConfig.CONFIG_GROUP))
+		{
+			return;
+		}
+
+		if (event.getKey().equals(TheGauntletConfig.CONFIG_KEY_ZEN_MODE))
+		{
+			clientThread.invokeLater(() -> {
+				if (client.getGameState() == GameState.LOGGED_IN)
+				{
+					final boolean inGauntlet = client.getVarbitValue(VARBIT_BOSS) == 1 ||
+						client.getVarbitValue(VARBIT_MAZE) == 1;
+
+					if (inGauntlet)
+					{
+						client.setGameState(GameState.LOADING);
+					}
+				}
+			});
+		}
 	}
 
 	@Subscribe

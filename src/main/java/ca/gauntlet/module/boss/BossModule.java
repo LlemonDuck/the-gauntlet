@@ -27,6 +27,7 @@
 
 package ca.gauntlet.module.boss;
 
+import ca.gauntlet.TheGauntletConfig;
 import ca.gauntlet.module.Module;
 import ca.gauntlet.module.overlay.TimerOverlay;
 import java.util.ArrayList;
@@ -37,16 +38,22 @@ import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.api.NPC;
 import net.runelite.api.NpcID;
 import net.runelite.api.NullNpcID;
+import net.runelite.api.NullObjectID;
+import net.runelite.api.Renderable;
 import net.runelite.api.events.ActorDeath;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
+import net.runelite.client.callback.Hooks;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.GameEventManager;
 
 @Singleton
 public final class BossModule implements Module
@@ -64,6 +71,10 @@ public final class BossModule implements Module
 
 	private static final List<Integer> TORNADO_IDS = List.of(NullNpcID.NULL_9025, NullNpcID.NULL_9039);
 
+	private static final List<Integer> GAME_OBJECT_IDS_ZEN_MODE = List.of(
+		NullObjectID.NULL_37337, NullObjectID.NULL_37339 // Barrier
+	);
+
 	@Getter(AccessLevel.PACKAGE)
 	private final List<NPC> tornadoes = new ArrayList<>();
 
@@ -72,11 +83,19 @@ public final class BossModule implements Module
 	@Inject
 	private Client client;
 	@Inject
+	private TheGauntletConfig config;
+	@Inject
+	private Hooks hooks;
+	@Inject
+	private GameEventManager gameEventManager;
+	@Inject
 	private OverlayManager overlayManager;
 	@Inject
 	private TimerOverlay timerOverlay;
 	@Inject
 	private BossOverlay bossOverlay;
+
+	private final Hooks.RenderableDrawListener drawListener = this::shouldDraw;
 
 	@Nullable
 	@Getter(AccessLevel.PACKAGE)
@@ -86,12 +105,8 @@ public final class BossModule implements Module
 	public void start()
 	{
 		eventBus.register(this);
-
-		for (final NPC npc : client.getNpcs())
-		{
-			onNpcSpawned(new NpcSpawned(npc));
-		}
-
+		hooks.registerRenderableDrawListener(drawListener);
+		gameEventManager.simulateGameEvents(this);
 		overlayManager.add(timerOverlay);
 		overlayManager.add(bossOverlay);
 		timerOverlay.setHunllefStart();
@@ -101,6 +116,7 @@ public final class BossModule implements Module
 	public void stop()
 	{
 		eventBus.unregister(this);
+		hooks.unregisterRenderableDrawListener(drawListener);
 		overlayManager.remove(timerOverlay);
 		overlayManager.remove(bossOverlay);
 		timerOverlay.reset();
@@ -157,5 +173,42 @@ public final class BossModule implements Module
 		{
 			hunllef = null;
 		}
+	}
+
+	@Subscribe
+	void onGameObjectSpawned(final GameObjectSpawned event)
+	{
+		if (!config.utilitiesZenMode())
+		{
+			return;
+		}
+
+		final GameObject gameObject = event.getGameObject();
+		final int id = gameObject.getId();
+
+		if (GAME_OBJECT_IDS_ZEN_MODE.contains(id))
+		{
+			return;
+		}
+
+		client.getTopLevelWorldView().getScene().removeGameObject(gameObject);
+	}
+
+	private boolean shouldDraw(final Renderable renderable, final boolean drawingUI)
+	{
+		if (renderable instanceof NPC)
+		{
+			final NPC npc = (NPC) renderable;
+			final int id = npc.getId();
+
+			if (HUNLLEF_IDS.contains(id) || TORNADO_IDS.contains(id))
+			{
+				return true;
+			}
+
+			return !config.utilitiesZenMode();
+		}
+
+		return true;
 	}
 }

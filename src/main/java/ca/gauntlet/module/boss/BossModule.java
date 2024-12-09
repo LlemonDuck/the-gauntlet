@@ -62,7 +62,7 @@ public final class BossModule implements Module
 		NpcID.CORRUPTED_HUNLLEF_9038
 	);
 
-	private static final List<Integer> TORNADO_IDS = List.of(NullNpcID.NULL_9025, NullNpcID.NULL_9039);
+	private static final List<Integer> TORNADO_IDS = List.of(NullNpcID.NULL_9025, NullNpcID.NULL_9039, 14142); // 14142 is echo tornado, remove after leagues
 
 	@Getter(AccessLevel.PACKAGE)
 	private final List<NPC> tornadoes = new ArrayList<>();
@@ -87,7 +87,7 @@ public final class BossModule implements Module
 	{
 		eventBus.register(this);
 
-		for (final NPC npc : client.getNpcs())
+		for (final NPC npc : client.getTopLevelWorldView().npcs())
 		{
 			onNpcSpawned(new NpcSpawned(npc));
 		}

@@ -51,6 +51,7 @@ import net.runelite.client.util.Text;
 class ResourceManager
 {
 	private static final Pattern PATTERN_RESOURCE_DROP = Pattern.compile("^.+ drop:\\s+((?<quantity>\\d+) x )?(?<name>.+)$");
+	private static final Pattern SHARD_MONSTER_DROP = Pattern.compile("You gather (\\d+) Crystal Shards\\.?");
 	private static final int SHARD_COUNT_BREAK_DOWN = 80;
 	private final EnumMap<Resource, ResourceCounter> counterByResource = new EnumMap<>(Resource.class);
 
@@ -148,6 +149,16 @@ class ResourceManager
 				Resource.CORRUPTED_SHARDS : Resource.CRYSTAL_SHARDS;
 
 			updateResourceCounter(resource, SHARD_COUNT_BREAK_DOWN);
+			return;
+		}
+
+		final Matcher matcher = SHARD_MONSTER_DROP.matcher(message);
+		if (matcher.matches()) {
+			int quantity = Integer.parseInt(matcher.group(1));
+			final Resource resource = region == Region.CORRUPTED
+				? Resource.CORRUPTED_SHARDS
+				: Resource.CRYSTAL_SHARDS;
+			updateResourceCounter(resource, quantity);
 			return;
 		}
 

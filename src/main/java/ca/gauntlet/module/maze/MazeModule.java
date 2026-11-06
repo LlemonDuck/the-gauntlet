@@ -176,6 +176,7 @@ public final class MazeModule implements Module
 				case "resourceTracker":
 				case "resourceTrackingMode":
 				case "resourceRemoveAcquired":
+				case "resourceTrackingInput":
 					resourceManager.reset();
 					resourceManager.init(client.getMapRegions()[0]);
 					break;

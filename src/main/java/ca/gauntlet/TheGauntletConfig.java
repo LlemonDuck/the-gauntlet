@@ -57,9 +57,17 @@ public interface TheGauntletConfig extends Config
 	String resourceTrackingSection = "resourceTracking";
 
 	@ConfigSection(
+		name = "Product Tracking",
+		description = "Used when Tracking Input is set to Products.",
+		position = 1,
+		closedByDefault = true
+	)
+	String productTrackingSection = "productTracking";
+
+	@ConfigSection(
 		name = "Resource Overlay",
 		description = "Resource overlay section.",
-		position = 1,
+		position = 2,
 		closedByDefault = true
 	)
 	String resourceOverlaySection = "resourceOverlay";
@@ -67,7 +75,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigSection(
 		name = "Utilities",
 		description = "Utilities section.",
-		position = 2,
+		position = 3,
 		closedByDefault = true
 	)
 	String utilitiesSection = "utilities";
@@ -75,7 +83,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigSection(
 		name = "Npcs",
 		description = "Npcs section.",
-		position = 3,
+		position = 4,
 		closedByDefault = true
 	)
 	String npcsSection = "npcs";
@@ -83,7 +91,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigSection(
 		name = "Hunllef",
 		description = "Hunllef section.",
-		position = 4,
+		position = 5,
 		closedByDefault = true
 	)
 	String hunllefSection = "hunllef";
@@ -91,7 +99,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigSection(
 		name = "Timer",
 		description = "Timer section.",
-		position = 5,
+		position = 6,
 		closedByDefault = true
 	)
 	String timerSection = "timer";
@@ -111,10 +119,23 @@ public interface TheGauntletConfig extends Config
 	}
 
 	@ConfigItem(
+		name = "Tracking Input",
+		description = "Resources uses the targets you enter below." +
+			"<br>Products calculates them from the gear and items in the Product Tracking section.",
+		position = 1,
+		keyName = "resourceTrackingInput",
+		section = resourceTrackingSection
+	)
+	default TrackingInput resourceTrackingInput()
+	{
+		return TrackingInput.RESOURCES;
+	}
+
+	@ConfigItem(
 		name = "Tracking Mode",
 		description = "Increment or decrement resource counters." +
 			"<br>Disable a counter by setting value to 0.",
-		position = 1,
+		position = 2,
 		keyName = "resourceTrackingMode",
 		section = resourceTrackingSection
 	)
@@ -126,7 +147,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Remove acquired resources",
 		description = "Remove counters when acquired amount reached.",
-		position = 2,
+		position = 3,
 		keyName = "resourceRemoveAcquired",
 		section = resourceTrackingSection
 	)
@@ -138,7 +159,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Ore",
 		description = "The desired number of ores to acquire.",
-		position = 3,
+		position = 4,
 		keyName = "resourceOre",
 		section = resourceTrackingSection
 	)
@@ -150,7 +171,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Phren bark",
 		description = "The desired number of phren barks to acquire.",
-		position = 4,
+		position = 5,
 		keyName = "resourceBark",
 		section = resourceTrackingSection
 	)
@@ -162,7 +183,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Linum tirinum",
 		description = "The desired number of linum tirinums to acquire.",
-		position = 5,
+		position = 6,
 		keyName = "resourceTirinum",
 		section = resourceTrackingSection
 	)
@@ -174,7 +195,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Grym leaf",
 		description = "The desired number of grym leaves to acquire.",
-		position = 6,
+		position = 7,
 		keyName = "resourceGrym",
 		section = resourceTrackingSection
 	)
@@ -186,7 +207,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Weapon frames",
 		description = "The desired number of weapon frames to acquire.",
-		position = 7,
+		position = 8,
 		keyName = "resourceFrame",
 		section = resourceTrackingSection
 	)
@@ -198,7 +219,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Paddlefish",
 		description = "The desired number of paddlefish to acquire.",
-		position = 8,
+		position = 9,
 		keyName = "resourcePaddlefish",
 		section = resourceTrackingSection
 	)
@@ -210,7 +231,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Crystal shards",
 		description = "The desired number of crystal shards to acquire.",
-		position = 9,
+		position = 10,
 		keyName = "resourceShard",
 		section = resourceTrackingSection
 	)
@@ -222,7 +243,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Bowstring",
 		description = "Whether or not to acquire the crystalline or corrupted bowstring.",
-		position = 10,
+		position = 11,
 		keyName = "resourceBowstring",
 		section = resourceTrackingSection
 	)
@@ -234,7 +255,7 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Spike",
 		description = "Whether or not to acquire the crystal or corrupted spike.",
-		position = 11,
+		position = 12,
 		keyName = "resourceSpike",
 		section = resourceTrackingSection
 	)
@@ -246,13 +267,135 @@ public interface TheGauntletConfig extends Config
 	@ConfigItem(
 		name = "Orb",
 		description = "Whether or not to acquire the crystal or corrupted orb.",
-		position = 12,
+		position = 13,
 		keyName = "resourceOrb",
 		section = resourceTrackingSection
 	)
 	default boolean resourceOrb()
 	{
 		return false;
+	}
+
+	// Product Tracking
+
+	@ConfigItem(
+		name = "Helm",
+		description = "The tier of helm to make.",
+		position = 0,
+		keyName = "productHelmTier",
+		section = productTrackingSection
+	)
+	default Tier productHelmTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Body",
+		description = "The tier of body to make.",
+		position = 1,
+		keyName = "productBodyTier",
+		section = productTrackingSection
+	)
+	default Tier productBodyTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Legs",
+		description = "The tier of legs to make.",
+		position = 2,
+		keyName = "productLegsTier",
+		section = productTrackingSection
+	)
+	default Tier productLegsTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Staff",
+		description = "The tier of staff to make.",
+		position = 3,
+		keyName = "productStaffTier",
+		section = productTrackingSection
+	)
+	default Tier productStaffTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Bow",
+		description = "The tier of bow to make.",
+		position = 4,
+		keyName = "productBowTier",
+		section = productTrackingSection
+	)
+	default Tier productBowTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Halberd",
+		description = "The tier of halberd to make.",
+		position = 5,
+		keyName = "productHalberdTier",
+		section = productTrackingSection
+	)
+	default Tier productHalberdTier()
+	{
+		return Tier.NONE;
+	}
+
+	@ConfigItem(
+		name = "Potions",
+		description = "The number of egniol potions to make.",
+		position = 6,
+		keyName = "productPotions",
+		section = productTrackingSection
+	)
+	default int productPotions()
+	{
+		return 0;
+	}
+
+	@ConfigItem(
+		name = "Paddlefish",
+		description = "The number of paddlefish to make.",
+		position = 7,
+		keyName = "productPaddlefish",
+		section = productTrackingSection
+	)
+	default int productPaddlefish()
+	{
+		return 0;
+	}
+
+	@ConfigItem(
+		name = "Crystal paddlefish",
+		description = "The number of crystal paddlefish to make.",
+		position = 8,
+		keyName = "productCrystalPaddlefish",
+		section = productTrackingSection
+	)
+	default int productCrystalPaddlefish()
+	{
+		return 0;
+	}
+
+	@ConfigItem(
+		name = "Teleport crystals",
+		description = "The number of extra teleport crystals to make (you start with one).",
+		position = 9,
+		keyName = "productTeleportCrystals",
+		section = productTrackingSection
+	)
+	default int productTeleportCrystals()
+	{
+		return 0;
 	}
 
 	// Resource Overlay Section
@@ -947,6 +1090,40 @@ public interface TheGauntletConfig extends Config
 	{
 		DECREMENT("Decrement"),
 		INCREMENT("Increment");
+
+		private final String name;
+
+		@Override
+		public String toString()
+		{
+			return name;
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	enum TrackingInput
+	{
+		RESOURCES("Resources"),
+		PRODUCTS("Products");
+
+		private final String name;
+
+		@Override
+		public String toString()
+		{
+			return name;
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	enum Tier
+	{
+		NONE("None"),
+		T1("Tier 1 (Basic)"),
+		T2("Tier 2 (Attuned)"),
+		T3("Tier 3 (Perfected)");
 
 		private final String name;
 

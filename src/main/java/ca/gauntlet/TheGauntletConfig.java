@@ -956,4 +956,22 @@ public interface TheGauntletConfig extends Config
 			return name;
 		}
 	}
+
+	@Getter
+	@AllArgsConstructor
+	enum Tier
+	{
+		NONE("None"),
+		T1("Tier 1 (Basic)"),
+		T2("Tier 2 (Attuned)"),
+		T3("Tier 3 (Perfected)");
+
+		private final String name;
+
+		@Override
+		public String toString()
+		{
+			return name;
+		}
+	}
 }

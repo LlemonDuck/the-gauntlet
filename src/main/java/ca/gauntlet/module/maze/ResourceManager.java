@@ -29,6 +29,7 @@
 package ca.gauntlet.module.maze;
 
 import ca.gauntlet.TheGauntletConfig;
+import ca.gauntlet.TheGauntletConfig.TrackingInput;
 import ca.gauntlet.TheGauntletConfig.TrackingMode;
 import ca.gauntlet.TheGauntletPlugin;
 import java.awt.Color;
@@ -214,16 +215,44 @@ class ResourceManager
 	private void createResourceCountersFromConfig()
 	{
 		final boolean corrupted = region == Region.CORRUPTED;
-		createResourceCounter(corrupted ? Resource.CORRUPTED_ORE : Resource.CRYSTAL_ORE, config.resourceOre());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_PHREN_BARK : Resource.PHREN_BARK, config.resourceBark());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_LINUM_TIRINUM : Resource.LINUM_TIRINUM, config.resourceTirinum());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_GRYM_LEAF : Resource.GRYM_LEAF, config.resourceGrym());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_WEAPON_FRAME : Resource.WEAPON_FRAME, config.resourceFrame());
-		createResourceCounter(Resource.RAW_PADDLEFISH, config.resourcePaddlefish());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_SHARDS : Resource.CRYSTAL_SHARDS, config.resourceShard());
-		createResourceCounter(corrupted ? Resource.CORRUPTED_BOWSTRING : Resource.CRYSTALLINE_BOWSTRING, config.resourceBowstring() ? 1 : 0);
-		createResourceCounter(corrupted ? Resource.CORRUPTED_SPIKE : Resource.CRYSTAL_SPIKE, config.resourceSpike() ? 1 : 0);
-		createResourceCounter(corrupted ? Resource.CORRUPTED_ORB : Resource.CRYSTAL_ORB, config.resourceOrb() ? 1 : 0);
+		final boolean products = config.resourceTrackingInput() == TrackingInput.PRODUCTS;
+		final ProductResourceCalculator calculator = createProductResourceCalculator();
+		createResourceCounter(corrupted ? Resource.CORRUPTED_ORE : Resource.CRYSTAL_ORE,
+			products ? calculator.calculateOre() : config.resourceOre());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_PHREN_BARK : Resource.PHREN_BARK,
+			products ? calculator.calculateBark() : config.resourceBark());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_LINUM_TIRINUM : Resource.LINUM_TIRINUM,
+			products ? calculator.calculateTirinum() : config.resourceTirinum());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_GRYM_LEAF : Resource.GRYM_LEAF,
+			products ? calculator.calculateGrym() : config.resourceGrym());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_WEAPON_FRAME : Resource.WEAPON_FRAME,
+			products ? calculator.calculateFrames() : config.resourceFrame());
+		createResourceCounter(Resource.RAW_PADDLEFISH,
+			products ? calculator.calculatePaddlefish() : config.resourcePaddlefish());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_SHARDS : Resource.CRYSTAL_SHARDS,
+			products ? calculator.calculateShards() : config.resourceShard());
+		createResourceCounter(corrupted ? Resource.CORRUPTED_BOWSTRING : Resource.CRYSTALLINE_BOWSTRING,
+			(products ? calculator.isBowstringNeeded() : config.resourceBowstring()) ? 1 : 0);
+		createResourceCounter(corrupted ? Resource.CORRUPTED_SPIKE : Resource.CRYSTAL_SPIKE,
+			(products ? calculator.isSpikeNeeded() : config.resourceSpike()) ? 1 : 0);
+		createResourceCounter(corrupted ? Resource.CORRUPTED_ORB : Resource.CRYSTAL_ORB,
+			(products ? calculator.isOrbNeeded() : config.resourceOrb()) ? 1 : 0);
+	}
+
+	private ProductResourceCalculator createProductResourceCalculator()
+	{
+		final ProductResourceCalculator calculator = new ProductResourceCalculator();
+		calculator.setHelmTier(config.productHelmTier());
+		calculator.setBodyTier(config.productBodyTier());
+		calculator.setLegsTier(config.productLegsTier());
+		calculator.setStaffTier(config.productStaffTier());
+		calculator.setBowTier(config.productBowTier());
+		calculator.setHalberdTier(config.productHalberdTier());
+		calculator.setPotionCount(config.productPotions());
+		calculator.setTeleportCrystalCount(config.productTeleportCrystals());
+		calculator.setPaddlefishCount(config.productPaddlefish());
+		calculator.setCrystalPaddlefishCount(config.productCrystalPaddlefish());
+		return calculator;
 	}
 
 	private enum Region
